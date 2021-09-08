@@ -1,0 +1,5 @@
+#Populate this with your database parameters, and rename this file to '.env'
+DB_HOST=''
+DB_USER=''
+DB_PASS=''
+DB=''
