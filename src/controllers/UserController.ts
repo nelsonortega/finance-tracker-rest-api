@@ -1,4 +1,4 @@
-import { User } from '../model/User'
+import { User } from '../models/User'
 import { Request, Response } from 'express'
 import userDatabaseHandler from "../database/databaseHandlers/UserDatabaseHandler"
 
