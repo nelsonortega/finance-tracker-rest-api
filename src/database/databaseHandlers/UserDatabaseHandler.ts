@@ -1,6 +1,6 @@
 import { IDBConnection } from "../createConnection"
 
-class DatabaseHandler {
+class UserDatabaseHandler {
   private dbConnection: IDBConnection
   
   constructor(dbConnection: IDBConnection) {
@@ -14,4 +14,4 @@ class DatabaseHandler {
   }
 }
 
-export default DatabaseHandler
+export default UserDatabaseHandler

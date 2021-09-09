@@ -1,14 +1,21 @@
-import express from 'express'
 import './utils/configDotenv'
-import userDatabaseHandler from './database'
+import express, { Request, Response } from 'express'
+import UserController from './controllers/UserController'
+import { createConnection } from './database/createConnection'
+import UserDatabaseHandler from './database/databaseHandlers/UserDatabaseHandler'
 
 const PORT = process.env.APP_PORT
+
 const app = express()
 
-app.get('/users', () => {
-  userDatabaseHandler.createUser()
-})
+app.use(express.json())
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`)
-})
+const dbConnection = createConnection()
+
+const userDatabaseHandler = new UserDatabaseHandler(dbConnection)
+
+const userController = new UserController(userDatabaseHandler)
+
+app.post('/users', (req: Request, res: Response) => userController.createUser(req, res))
+
+app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
