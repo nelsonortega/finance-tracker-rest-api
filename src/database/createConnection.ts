@@ -1,7 +1,7 @@
-import mysql, { Connection } from 'mysql'
+import mysql, { Connection } from 'mysql2/promise'
 
-export function createConnection() {
-  let dbConnection: Connection = mysql.createConnection({
+export async function createConnection() {
+  let dbConnection: Connection = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,

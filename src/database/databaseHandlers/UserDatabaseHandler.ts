@@ -1,5 +1,5 @@
-import { Connection } from "mysql"
-import { User } from "../../models/User"
+import { User } from '../../models/User'
+import { Connection, ResultSetHeader } from 'mysql2/promise'
 
 class UserDatabaseHandler {
   private dbConnection: Connection
@@ -8,15 +8,29 @@ class UserDatabaseHandler {
     this.dbConnection = dbConnection
   }
 
-  createUser(user: User) {
-    this.dbConnection.query(
-      `INSERT INTO users (first_name, last_name, email, user_password) VALUES (?, ?, ?, ?)`, 
-      [user.first_name, user.last_name, user.email, user.user_password],
-      (err, results) => {
-        console.log(err)
-        console.log(results)
+  async createUser(user: User) {
+    let createdUserId: number
+    
+    try {
+      let [ data ]  = await this.dbConnection.query(
+        `INSERT INTO users (first_name, last_name, email, user_password) VALUES (?, ?, ?, ?)`, 
+        [user.first_name, user.last_name, user.email, user.user_password]
+      )
+
+      const createdUser = data as ResultSetHeader
+
+      createdUserId = createdUser.insertId
+    } catch (err) {
+      return {
+        success: false,
+        error: err
       }
-    )
+    }
+
+    return {
+      success: true,
+      createdUserId: createdUserId
+    }
   }
 }
 

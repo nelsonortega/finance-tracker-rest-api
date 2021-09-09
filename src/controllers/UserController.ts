@@ -1,6 +1,6 @@
 import { User } from '../models/User'
 import { Request, Response } from 'express'
-import userDatabaseHandler from "../database/databaseHandlers/UserDatabaseHandler"
+import userDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandler'
 
 class UserController {
   private dbHandler: userDatabaseHandler
@@ -9,15 +9,22 @@ class UserController {
     this.dbHandler = dbHandler
   }
 
-  createUser(req: Request, res: Response) {
+  async createUser(req: Request, res: Response) {
     const user = new User(req.body)
     user.hashPassword()
 
-    this.dbHandler.createUser(user)
+    const dbResponse = await this.dbHandler.createUser(user)
+
+    if (!dbResponse.success) {
+      res.json({
+        success: false,
+        error: dbResponse.error
+      })
+    }
 
     res.json({
       success: true,
-      message: 'User created'
+      message: `User created with Id ${dbResponse.createdUserId}`
     })
   }
 }
