@@ -13,7 +13,7 @@ class UserController {
     const user = new User(req.body)
     user.hashPassword()
 
-    this.dbHandler.createUser()
+    this.dbHandler.createUser(user)
 
     res.json({
       success: true,

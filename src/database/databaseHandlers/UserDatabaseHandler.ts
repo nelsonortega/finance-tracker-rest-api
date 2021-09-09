@@ -1,16 +1,22 @@
-import { IDBConnection } from "../createConnection"
+import { Connection } from "mysql"
+import { User } from "../../models/User"
 
 class UserDatabaseHandler {
-  private dbConnection: IDBConnection
+  private dbConnection: Connection
   
-  constructor(dbConnection: IDBConnection) {
+  constructor(dbConnection: Connection) {
     this.dbConnection = dbConnection
   }
 
-  createUser() {
-    this.dbConnection.query(`select * from users`, (_err, resuls) => {
-      console.log(resuls)
-    })
+  createUser(user: User) {
+    this.dbConnection.query(
+      `INSERT INTO users (first_name, last_name, email, user_password) VALUES (?, ?, ?, ?)`, 
+      [user.first_name, user.last_name, user.email, user.user_password],
+      (err, results) => {
+        console.log(err)
+        console.log(results)
+      }
+    )
   }
 }
 

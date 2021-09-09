@@ -10,5 +10,3 @@ export function createConnection() {
 
   return dbConnection
 }
-
-export type IDBConnection = Connection
