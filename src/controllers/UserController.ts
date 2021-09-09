@@ -4,13 +4,27 @@ import userDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandle
 
 class UserController {
   private dbHandler: userDatabaseHandler
+  private validateUser: (user: User) => Array<string>
 
-  constructor(dbHandler: userDatabaseHandler) {
+  constructor(dbHandler: userDatabaseHandler, validateUser: (user: User) => Array<string>) {
     this.dbHandler = dbHandler
+    this.validateUser = validateUser
   }
 
   async createUser(req: Request, res: Response) {
     const user = new User(req.body)
+
+    const validationErrors = this.validateUser(user)
+
+    if (validationErrors.length > 0) {
+      res.json({
+        success: false,
+        error: validationErrors
+      })
+
+      return
+    }
+
     user.hashPassword()
 
     const dbResponse = await this.dbHandler.createUser(user)
@@ -20,6 +34,8 @@ class UserController {
         success: false,
         error: dbResponse.error
       })
+
+      return
     }
 
     res.json({

@@ -1,4 +1,5 @@
 import './utils/configDotenv'
+import { validateUser } from './utils/validation'
 import express, { Request, Response } from 'express'
 import UserController from './controllers/UserController'
 import { createConnection } from './database/createConnection'
@@ -15,7 +16,7 @@ async function main() {
 
   const userDatabaseHandler = new UserDatabaseHandler(dbConnection)
 
-  const userController = new UserController(userDatabaseHandler)
+  const userController = new UserController(userDatabaseHandler, validateUser)
 
   app.post('/users', (req: Request, res: Response) => userController.createUser(req, res))
 
