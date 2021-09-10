@@ -4,6 +4,8 @@ import express, { Request, Response } from 'express'
 import UserController from './controllers/UserController'
 import { createConnection } from './database/createConnection'
 import UserDatabaseHandler from './database/databaseHandlers/UserDatabaseHandler'
+import AccountDatabaseHandler from './database/databaseHandlers/AccountDatabaseHandler'
+import TransactionDatabaseHandler from './database/databaseHandlers/TransactionDatabaseHandler'
 
 async function main() {
   const PORT = process.env.APP_PORT
@@ -15,6 +17,11 @@ async function main() {
   const dbConnection = await createConnection()
 
   const userDatabaseHandler = new UserDatabaseHandler(dbConnection)
+  const accountDatabaseHandler = new AccountDatabaseHandler(dbConnection)
+  const transactionDatabaseHandler = new TransactionDatabaseHandler(dbConnection)
+
+  accountDatabaseHandler.createAccount()
+  transactionDatabaseHandler.createTransaction()
 
   const userController = new UserController(userDatabaseHandler, validateUser)
 
