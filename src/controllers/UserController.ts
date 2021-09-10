@@ -1,12 +1,12 @@
 import { User } from '../models/User'
 import { Request, Response } from 'express'
-import userDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandler'
+import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandler'
 
 class UserController {
-  private dbHandler: userDatabaseHandler
+  private dbHandler: UserDatabaseHandler
   private validateUser: (user: User) => Array<string>
 
-  constructor(dbHandler: userDatabaseHandler, validateUser: (user: User) => Array<string>) {
+  constructor(dbHandler: UserDatabaseHandler, validateUser: (user: User) => Array<string>) {
     this.dbHandler = dbHandler
     this.validateUser = validateUser
   }

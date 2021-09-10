@@ -1,4 +1,6 @@
 import { User } from '../models/User'
+import { Account } from '../models/Account'
+import { Transaction } from '../models/Transaction'
 
 export function validateUser(user: User) {
   let errors: Array<string> = []
@@ -22,6 +24,18 @@ export function validateUser(user: User) {
   } else if(!emailRegex.test(email)) {
     errors.push(`Field email is not valid`)
   }
+
+  return errors
+}
+
+export function validateAccount(_account: Account) {
+  let errors: Array<string> = []
+
+  return errors
+}
+
+export function validateTransaction(_transaction: Transaction) { 
+  let errors: Array<string> = []
 
   return errors
 }
