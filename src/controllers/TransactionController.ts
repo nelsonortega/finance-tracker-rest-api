@@ -22,6 +22,13 @@ class TransactionController {
       message: `Transaction created`
     })
   }
+
+  getTransactionsByAccount(_req: Request, res: Response) {
+    res.json({
+      success: false,
+      message: `Not yet implemented`
+    })
+  }
 }
 
 export default TransactionController

@@ -43,6 +43,20 @@ class UserController {
       message: `User created with Id ${dbResponse.createdUserId}`
     })
   }
+
+  updateUser(_req: Request, res: Response) {
+    res.json({
+      success: false,
+      message: `Not yet implemented`
+    })
+  }
+
+  deleteUser(_req: Request, res: Response) {
+    res.json({
+      success: false,
+      message: `Not yet implemented`
+    })
+  }
 }
 
 export default UserController

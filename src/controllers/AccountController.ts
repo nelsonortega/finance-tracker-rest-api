@@ -22,6 +22,27 @@ class AccountController {
       message: `Account created`
     })
   }
+
+  getAccountsByUser(_req: Request, res: Response) {
+    res.json({
+      success: false,
+      message: `Not yet implemented`
+    })
+  }
+
+  updateAccount(_req: Request, res: Response) {
+    res.json({
+      success: false,
+      message: `Not yet implemented`
+    })
+  }
+
+  deleteAccount(_req: Request, res: Response) {
+    res.json({
+      success: false,
+      message: `Not yet implemented`
+    })
+  }
 }
 
 export default AccountController

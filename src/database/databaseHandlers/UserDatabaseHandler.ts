@@ -32,6 +32,14 @@ class UserDatabaseHandler {
       createdUserId: createdUserId
     }
   }
+
+  async getUserById(user_id: number) {
+    let [ user ]  = await this.dbConnection.query(
+      `SELECT * FROM users where user_id = ?`, [user_id]
+    )
+
+    console.log(user)
+  }
 }
 
 export default UserDatabaseHandler
