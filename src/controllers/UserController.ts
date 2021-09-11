@@ -1,5 +1,6 @@
 import { User } from '../models/User'
 import { Request, Response } from 'express'
+import { parseError } from '../utils/dbParseError'
 import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandler'
 
 class UserController {
@@ -29,10 +30,10 @@ class UserController {
 
     const dbResponse = await this.dbHandler.createUser(user)
 
-    if (!dbResponse.success) {
+    if (!dbResponse.success && dbResponse.error) {
       res.json({
         success: false,
-        error: dbResponse.error
+        error: parseError(dbResponse.error)
       })
 
       return

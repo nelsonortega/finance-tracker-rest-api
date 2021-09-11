@@ -1,5 +1,5 @@
 import { IUser, User } from '../../models/User'
-import { Connection, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
+import { Connection, QueryError, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 
 class UserDatabaseHandler {
   private dbConnection: Connection
@@ -23,7 +23,7 @@ class UserDatabaseHandler {
     } catch (err) {
       return {
         success: false,
-        error: err
+        error: err as QueryError
       }
     }
 
