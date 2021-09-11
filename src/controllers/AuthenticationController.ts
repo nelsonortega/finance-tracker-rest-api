@@ -8,12 +8,44 @@ class AuthenticationController {
     this.dbHandler = dbHandler
   }
 
-  login(_req: Request, res: Response) {
-    this.dbHandler.getUserById(1)
+  async login(req: Request, res: Response) {
+    const { email, user_password } = req.body
+
+    if(!(email && user_password)) {
+      res.json({
+        success: false,
+        message: `Fields email and user_password can't be empty`
+      })
+
+      return
+    }
+
+    const user = await this.dbHandler.getUserByEmail(email)
+
+    if (!user) {
+      res.json({
+        success: false,
+        message: `No user found with that email address`
+      })
+
+      return
+    }
+
+    if(!user.checkPassword(user_password)) {
+      res.json({
+        success: false,
+        message: `Incorrect password`
+      })
+
+      return
+    }
+
+    delete user.user_password
     
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      token: '',
+      user: user
     })
   }
 

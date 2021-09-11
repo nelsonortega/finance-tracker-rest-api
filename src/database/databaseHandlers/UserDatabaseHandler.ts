@@ -1,5 +1,5 @@
-import { User } from '../../models/User'
-import { Connection, ResultSetHeader } from 'mysql2/promise'
+import { IUser, User } from '../../models/User'
+import { Connection, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 
 class UserDatabaseHandler {
   private dbConnection: Connection
@@ -33,12 +33,20 @@ class UserDatabaseHandler {
     }
   }
 
-  async getUserById(user_id: number) {
-    let [ user ]  = await this.dbConnection.query(
-      `SELECT * FROM users where user_id = ?`, [user_id]
-    )
+  async getUserByEmail(email: string) {
+    let [ data ]  = await this.dbConnection.query(
+      `SELECT * FROM users where email = ?`, [email]
+    ) as RowDataPacket[]
 
-    console.log(user)
+    if (data.length === 0) {
+      return undefined
+    }
+
+    const userData = data[0] as IUser
+
+    const user = new User(userData)
+
+    return user
   }
 }
 
