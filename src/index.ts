@@ -1,46 +1,27 @@
-import './utils/configDotenv'
-import { validateJWT } from './middlewares/jwt'
-import express, { Request, Response } from 'express'
-import UserController from './controllers/UserController'
+import dotenv from 'dotenv'
+import express from 'express'
+import { getUserRoutes } from './routes/users'
+import { getAccountRoutes } from './routes/accounts'
+import { getTransactionRoutes } from './routes/transactions'
 import { createConnection } from './database/createConnection'
-import AccountController from './controllers/AccountController'
-import TransactionController from './controllers/TransactionController'
-import AuthenticationController from './controllers/AuthenticationController'
-import UserDatabaseHandler from './database/databaseHandlers/UserDatabaseHandler'
-import AccountDatabaseHandler from './database/databaseHandlers/AccountDatabaseHandler'
-import TransactionDatabaseHandler from './database/databaseHandlers/TransactionDatabaseHandler'
-import { validateAccount, validatePassword, validateTransaction, validateUser } from './utils/validation'
+import { getAuthenticationRoutes } from './routes/authentication'
+
+dotenv.config()
 
 async function main() {
   const PORT = process.env.APP_PORT
-
+  
   const app = express()
-
+  
   app.use(express.json())
-
+  
   const dbConnection = await createConnection()
-
-  const userDatabaseHandler = new UserDatabaseHandler(dbConnection)
-  const accountDatabaseHandler = new AccountDatabaseHandler(dbConnection)
-  const transactionDatabaseHandler = new TransactionDatabaseHandler(dbConnection)
-
-  const userController = new UserController(userDatabaseHandler, validateUser)
-  const accountController = new AccountController(accountDatabaseHandler, validateAccount)
-  const authenticationController = new AuthenticationController(userDatabaseHandler, validatePassword)
-  const transactionController = new TransactionController(transactionDatabaseHandler, validateTransaction)
-
-  app.post('/users', (req: Request, res: Response) => userController.createUser(req, res))
-  app.delete('/users', (req: Request, res: Response) => userController.deleteUser(req, res))
-  app.patch('/users', (req: Request, res: Response) => userController.updateUser(req, res))
-  app.get('/accounts', (req: Request, res: Response) => accountController.getAccountsByUser(req, res))
-  app.post('/accounts', (req: Request, res: Response) => accountController.createAccount(req, res))
-  app.delete('/accounts/:id', (req: Request, res: Response) => accountController.deleteAccount(req, res))
-  app.patch('/accounts/:id', (req: Request, res: Response) => accountController.updateAccount(req, res))
-  app.get('/transactions/:id', (req: Request, res: Response) => transactionController.getTransactionsByAccount(req, res))
-  app.post('/transactions', (req: Request, res: Response) => transactionController.createTransaction(req, res))
-  app.post('/authentication/login', (req: Request, res: Response) => authenticationController.login(req, res))
-  app.post('/authentication/change-password', validateJWT, (req: Request, res: Response) => authenticationController.changePassword(req, res))
-
+  
+  app.use('/users', getUserRoutes(dbConnection))
+  app.use('/accounts', getAccountRoutes(dbConnection))
+  app.use('/transactions', getTransactionRoutes(dbConnection))
+  app.use('/authentication', getAuthenticationRoutes(dbConnection))
+  
   app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
 }
 
