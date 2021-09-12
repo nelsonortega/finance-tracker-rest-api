@@ -39,3 +39,17 @@ export function validateTransaction(_transaction: Transaction) {
 
   return errors
 }
+
+export function validatePassword(password: string, oldPassword: string) {
+  let errors: Array<string> = []
+
+  if (password === null || password === undefined || password.length < 6) {
+    errors.push(`Field user_password should be at least 6 characters long`)
+  }
+
+  if (oldPassword === null || oldPassword === undefined || oldPassword.length < 6) {
+    errors.push(`Field old_password should be at least 6 characters long`)
+  }
+
+  return errors
+}

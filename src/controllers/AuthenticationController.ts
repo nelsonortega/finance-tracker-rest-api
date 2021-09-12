@@ -4,9 +4,11 @@ import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandle
 
 class AuthenticationController {
   private dbHandler: UserDatabaseHandler
+  private validatePassword: (password: string, oldPassword: string) => Array<string>
 
-  constructor(dbHandler: UserDatabaseHandler) {
+  constructor(dbHandler: UserDatabaseHandler, validatePassword: (password: string, oldPassword: string) => Array<string>) {
     this.dbHandler = dbHandler
+    this.validatePassword = validatePassword
   }
 
   async login(req: Request, res: Response) {
@@ -52,10 +54,67 @@ class AuthenticationController {
     })
   }
 
-  logout(_req: Request, res: Response) {
+  async changePassword(req: Request, res: Response) {
+    const { user_id } = req.params
+    const { old_password, user_password } = req.body
+
+    const validationErrors = this.validatePassword(user_password, old_password)
+
+    if (validationErrors.length > 0) {
+      res.json({
+        success: false,
+        error: validationErrors
+      })
+
+      return
+    }
+
+    const user = await this.dbHandler.getUserById(user_id)
+
+    if (!user) {
+      res.json({
+        success: false,
+        message: `No user found with that id`
+      })
+
+      return
+    }
+
+    if (!user.checkPassword(old_password)) {
+      res.json({
+        success: false,
+        message: `Old password is incorrect`
+      })
+
+      return
+    }
+
+    if (user.checkPassword(user_password)) {
+      res.json({
+        success: false,
+        message: `New password can't be the same as the old one`
+      })
+
+      return
+    }
+
+    user.user_password = user_password
+    user.hashPassword()
+
+    const dbResponse = await this.dbHandler.updateUser(user)
+
+    if (dbResponse.error) {
+      res.json({
+        success: false,
+        error: dbResponse.error.code
+      })
+
+      return
+    }
+
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      message: `Password changed`
     })
   }
 }
