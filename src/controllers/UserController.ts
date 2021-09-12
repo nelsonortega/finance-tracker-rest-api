@@ -52,10 +52,53 @@ class UserController {
     })
   }
 
-  deleteUser(_req: Request, res: Response) {
+  async deleteUser(req: Request, res: Response) {
+    const { user_id } = req.params
+    const { user_password } = req.body
+
+    if(!user_password) {
+      res.json({
+        success: false,
+        message: `Field user_password can't be empty`
+      })
+
+      return
+    }
+
+    const user = await this.dbHandler.getUserById(user_id)
+
+    if (!user) {
+      res.json({
+        success: false,
+        message: `No user found`
+      })
+
+      return
+    }
+
+    if(!user.checkPassword(user_password)) {
+      res.json({
+        success: false,
+        message: `Incorrect password`
+      })
+
+      return
+    }
+
+    const dbResponse = await this.dbHandler.deleteUser(user_id)
+
+    if (dbResponse.error) {
+      res.json({
+        success: false,
+        error: parseError(dbResponse.error) 
+      })
+
+      return
+    }
+
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      message: dbResponse.message
     })
   }
 }

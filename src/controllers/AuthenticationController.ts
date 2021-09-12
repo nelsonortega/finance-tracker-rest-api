@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
+import { parseError } from '../utils/dbParseError'
 import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandler'
 
 class AuthenticationController {
@@ -106,7 +107,7 @@ class AuthenticationController {
     if (dbResponse.error) {
       res.json({
         success: false,
-        error: dbResponse.error.code
+        error: parseError(dbResponse.error) 
       })
 
       return

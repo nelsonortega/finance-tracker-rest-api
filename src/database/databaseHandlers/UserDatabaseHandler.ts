@@ -52,6 +52,25 @@ class UserDatabaseHandler {
     }
   }
 
+  async deleteUser(user_id: string) {    
+    try {
+      await this.dbConnection.query(
+        `DELETE FROM users WHERE user_id = ?`, 
+        [user_id]
+      )
+    } catch (err) {
+      return {
+        success: false,
+        error: err as QueryError
+      }
+    }
+
+    return {
+      success: true,
+      message: `User deleted`
+    }
+  }
+
   async getUserByEmail(email: string) {
     let [ data ]  = await this.dbConnection.query(
       `SELECT * FROM users where email = ?`, [email]
