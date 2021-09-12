@@ -140,6 +140,78 @@ class UserController {
       message: dbResponse.message
     })
   }
+
+  async changeEmail(req: Request, res: Response) {
+    const { user_id } = req.params
+    const { new_email, user_password } = req.body
+
+    if (!user_password) {
+      res.json({
+        success: false,
+        message: `Field user_password is required`
+      })
+
+      return
+    }
+
+    const user = await this.dbHandler.getUserById(user_id)
+
+    if (!user) {
+      res.json({
+        success: false,
+        message: `No user found with that id`
+      })
+
+      return
+    }
+
+    if (!user.checkPassword(user_password)) {
+      res.json({
+        success: false,
+        message: `Incorrect password`
+      })
+
+      return
+    }
+
+    if (user.email === new_email) {
+      res.json({
+        success: false,
+        message: `New email can't be the same as the old one`
+      })
+
+      return
+    }
+
+    user.email = new_email
+
+    const validationErrors = this.validateUser(user)
+
+    if (validationErrors.length > 0) {
+      res.json({
+        success: false,
+        error: validationErrors
+      })
+
+      return
+    }
+
+    const dbResponse = await this.dbHandler.updateUser(user)
+
+    if (dbResponse.error) {
+      res.json({
+        success: false,
+        error: parseError(dbResponse.error)
+      })
+
+      return
+    }
+
+    res.json({
+      success: true,
+      message: `Email changed`
+    })
+  }
 }
 
 export default UserController

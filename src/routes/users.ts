@@ -12,8 +12,9 @@ export function getUserRoutes(dbConnection: Connection) {
   const userController = new UserController(userDatabaseHandler, validateUser)
 
   userRoutes.post('/', (req: Request, res: Response) => userController.createUser(req, res))
-  userRoutes.delete('/', validateJWT, (req: Request, res: Response) => userController.deleteUser(req, res))
   userRoutes.patch('/', validateJWT, (req: Request, res: Response) => userController.updateUser(req, res))
+  userRoutes.delete('/', validateJWT, (req: Request, res: Response) => userController.deleteUser(req, res))
+  userRoutes.patch('/change-email', validateJWT, (req: Request, res: Response) => userController.changeEmail(req, res))
 
   return userRoutes
 }
