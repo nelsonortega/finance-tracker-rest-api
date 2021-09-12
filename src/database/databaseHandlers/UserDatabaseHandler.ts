@@ -15,11 +15,9 @@ class UserDatabaseHandler {
       let [ data ]  = await this.dbConnection.query(
         `INSERT INTO users (first_name, last_name, email, user_password) VALUES (?, ?, ?, ?)`, 
         [user.first_name, user.last_name, user.email, user.user_password]
-      )
+      ) as ResultSetHeader[]
 
-      const createdUser = data as ResultSetHeader
-
-      createdUserId = createdUser.insertId
+      createdUserId = data.insertId
     } catch (err) {
       return {
         success: false,
