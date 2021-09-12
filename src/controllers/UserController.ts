@@ -45,10 +45,49 @@ class UserController {
     })
   }
 
-  updateUser(_req: Request, res: Response) {
+  async updateUser(req: Request, res: Response) {
+    const { user_id } = req.params
+    const { first_name, last_name } = req.body
+
+    const user = await this.dbHandler.getUserById(user_id)
+
+    if (!user) {
+      res.json({
+        success: false,
+        message: `No user found with that id`
+      })
+
+      return
+    }
+
+    user.first_name = first_name
+    user.last_name = last_name
+
+    const validationErrors = this.validateUser(user)
+
+    if (validationErrors.length > 0) {
+      res.json({
+        success: false,
+        error: validationErrors
+      })
+
+      return
+    }
+
+    const dbResponse = await this.dbHandler.updateUser(user)
+
+    if (dbResponse.error) {
+      res.json({
+        success: false,
+        error: parseError(dbResponse.error) 
+      })
+
+      return
+    }
+
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      message: `User updated`
     })
   }
 
