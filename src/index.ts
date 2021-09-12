@@ -30,9 +30,9 @@ async function main() {
   const transactionController = new TransactionController(transactionDatabaseHandler, validateTransaction)
 
   app.post('/users', (req: Request, res: Response) => userController.createUser(req, res))
-  app.delete('/users/:id', (req: Request, res: Response) => userController.deleteUser(req, res))
-  app.patch('/users/:id', (req: Request, res: Response) => userController.updateUser(req, res))
-  app.get('/accounts/:id', (req: Request, res: Response) => accountController.getAccountsByUser(req, res))
+  app.delete('/users', (req: Request, res: Response) => userController.deleteUser(req, res))
+  app.patch('/users', (req: Request, res: Response) => userController.updateUser(req, res))
+  app.get('/accounts', (req: Request, res: Response) => accountController.getAccountsByUser(req, res))
   app.post('/accounts', (req: Request, res: Response) => accountController.createAccount(req, res))
   app.delete('/accounts/:id', (req: Request, res: Response) => accountController.deleteAccount(req, res))
   app.patch('/accounts/:id', (req: Request, res: Response) => accountController.updateAccount(req, res))
