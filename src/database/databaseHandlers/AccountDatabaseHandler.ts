@@ -66,6 +66,19 @@ class AccountDatabaseHandler {
 
     return accounts
   }
+
+  async getAccountById(account_id: string) {
+    let [ data ]  = await this.dbConnection.query(
+      `SELECT * FROM accounts where account_id = ?`, [account_id]
+    ) as RowDataPacket[]
+
+    if (data.length === 0) return undefined
+
+    const accountData = data[0] as Account
+    const account = new Account(accountData)
+
+    return account
+  }
 }
 
 export default AccountDatabaseHandler

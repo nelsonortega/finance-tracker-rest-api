@@ -54,10 +54,44 @@ class AccountController {
     })
   }
 
-  updateAccount(_req: Request, res: Response) {
+  async updateAccount(req: Request, res: Response) {
+    const { user_id, id } = req.params
+    const { account_name, currency } = req.body
+    
+    const account = await this.dbHandler.getAccountById(id)
+
+    if (!account) {
+      return res.json({
+        success: false,
+        error: `No account found`
+      })
+    }
+
+    if (parseInt(user_id) !== account.user_id) {
+      return res.json({
+        success: false,
+        error: `Account doesn't belong to user`
+      })
+    }
+
+    account.account_name = account_name
+    account.currency = currency
+
+    const invalidAccount = this.validateAccount(account)
+    if (invalidAccount) return res.json(invalidAccount)
+
+    const dbResponse = await this.dbHandler.updateAccount(account)
+
+    if (dbResponse.error) {
+      return res.json({
+        success: false,
+        error: parseError(dbResponse.error)
+      })      
+    }
+
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      message: `Account updated`
     })
   }
 
