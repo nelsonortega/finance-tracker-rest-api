@@ -28,8 +28,22 @@ export function validateUser(user: User) {
   return errors
 }
 
-export function validateAccount(_account: Account) {
+export function validateAccount(account: Account) {
   let errors: Array<string> = []
+  const { account_name, currency, user_id } = account
+
+
+  if (account_name === null || account_name === undefined || account_name.trim().length <= 0) {
+    errors.push(`Field account_name can't be empty`)
+  }
+
+  if (currency === null || currency === undefined || currency.trim().length <= 0) {
+    errors.push(`Field currency can't be empty`)
+  }
+
+  if (user_id === null || user_id === undefined) {
+    errors.push(`Field user_id can't be empty`)
+  }
 
   return errors
 }

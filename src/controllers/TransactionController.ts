@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import TransactionDatabaseHandler from '../database/databaseHandlers/TransactionDatabaseHandler'
 import { Transaction } from '../models/Transaction'
+import TransactionDatabaseHandler from '../database/databaseHandlers/TransactionDatabaseHandler'
 
 class TransactionController {
   private dbHandler: TransactionDatabaseHandler
@@ -15,7 +15,7 @@ class TransactionController {
     const transaction = new Transaction(req.body)
 
     this.validateTransaction(transaction)
-    this.dbHandler.createTransaction()
+    this.dbHandler.createTransaction(transaction)
 
     res.json({
       success: true,
