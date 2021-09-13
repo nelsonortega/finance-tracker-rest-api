@@ -6,12 +6,10 @@ export function validateJWT(req: Request, res: Response, next: NextFunction) {
   const authenticationHeader = req.headers['authentication'] as string
 
   if (!authenticationHeader) {
-    res.json({
+    return res.json({
       success: false,
       message: `A token is required`
-    })
-
-    return
+    })    
   }
 
   try {
@@ -19,14 +17,11 @@ export function validateJWT(req: Request, res: Response, next: NextFunction) {
     const userInfo: JwtPayload = jwt.verify(token, process.env.JWT_TOKEN_SECRET as string) as JwtPayload
 
     req.params.user_id = userInfo.user_id
-    req.params.email = userInfo.email
   } catch (error) {
-    res.json({
+    return res.json({
       success: false,
       message: `Invalid token`
     })
-
-    return
   }
 
   next()

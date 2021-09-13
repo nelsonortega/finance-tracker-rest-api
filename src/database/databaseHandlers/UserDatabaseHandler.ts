@@ -19,16 +19,10 @@ class UserDatabaseHandler {
 
       createdUserId = data.insertId
     } catch (err) {
-      return {
-        success: false,
-        error: err as QueryError
-      }
+      return { error: err as QueryError }
     }
 
-    return {
-      success: true,
-      createdUserId: createdUserId
-    }
+    return { createdUserId }
   }
 
   async updateUser(user: User) {    
@@ -38,16 +32,10 @@ class UserDatabaseHandler {
         [user.first_name, user.last_name, user.email, user.user_password, user.user_id]
       )
     } catch (err) {
-      return {
-        success: false,
-        error: err as QueryError
-      }
+      return { error: err as QueryError }
     }
 
-    return {
-      success: true,
-      message: `User updated`
-    }
+    return { message: `User updated` }
   }
 
   async deleteUser(user_id: string) {    
@@ -57,16 +45,10 @@ class UserDatabaseHandler {
         [user_id]
       )
     } catch (err) {
-      return {
-        success: false,
-        error: err as QueryError
-      }
+      return { error: err as QueryError }
     }
 
-    return {
-      success: true,
-      message: `User deleted`
-    }
+    return { message: `User deleted` }
   }
 
   async getUserByEmail(email: string) {
