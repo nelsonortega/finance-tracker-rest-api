@@ -1,4 +1,5 @@
 import { Account } from '../../models/Account'
+import { IUser, User } from '../../models/User'
 import { Connection, QueryError, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 
 class AccountDatabaseHandler {
@@ -78,6 +79,19 @@ class AccountDatabaseHandler {
     const account = new Account(accountData)
 
     return account
+  }
+
+  async getUserById(user_id: string) {
+    let [ data ]  = await this.dbConnection.query(
+      `SELECT * FROM users where user_id = ?`, [user_id]
+    ) as RowDataPacket[]
+
+    if (data.length === 0) return undefined
+
+    const userData = data[0] as IUser
+    const user = new User(userData)
+
+    return user
   }
 }
 

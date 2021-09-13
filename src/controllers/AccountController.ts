@@ -95,10 +95,61 @@ class AccountController {
     })
   }
 
-  deleteAccount(_req: Request, res: Response) {
+  async deleteAccount(req: Request, res: Response) {
+    const { user_id, id } = req.params
+    const { user_password } = req.body
+
+    if (!user_password) {
+      return res.json({
+        success: false,
+        error: `Field user_password is required`
+      })
+    }
+
+    const account = await this.dbHandler.getAccountById(id)
+
+    if (!account) {
+      return res.json({
+        success: false,
+        error: `Account not found`
+      })
+    }
+
+    const user = await this.dbHandler.getUserById(user_id)
+
+    if (!user) {
+      return res.json({
+        success: false,
+        error: `User not found`
+      })
+    }
+
+    if (user.user_id !== account.user_id) {
+      return res.json({
+        success: false,
+        error: `Account doesn't belong to user`
+      })
+    }
+
+    if (!user.checkPassword(user_password)) {
+      return res.json({
+        success: false,
+        error: `Incorrect password`
+      })
+    }
+
+    const dbResponse = await this.dbHandler.deleteAccount(id)
+
+    if (dbResponse.error) {
+      return res.json({
+        success: false,
+        error: parseError(dbResponse.error)
+      })      
+    }
+
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      message: `Account deleted`
     })
   }
 
