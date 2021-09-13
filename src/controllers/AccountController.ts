@@ -36,10 +36,21 @@ class AccountController {
     })
   }
 
-  getAccountsByUser(_req: Request, res: Response) {
+  async getAccountsByUser(req: Request, res: Response) {
+    const { user_id } = req.params
+
+    const dbResponse = await this.dbHandler.getAccountsByUser(user_id)
+
+    if (!dbResponse) {
+      return res.json({
+        success: false,
+        error: `No accounts found for this user`
+      })
+    }
+
     res.json({
-      success: false,
-      message: `Not yet implemented`
+      success: true,
+      data: dbResponse
     })
   }
 

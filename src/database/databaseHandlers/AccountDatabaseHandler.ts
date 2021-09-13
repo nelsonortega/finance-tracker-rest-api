@@ -1,4 +1,4 @@
-import { Account, IAccount } from '../../models/Account'
+import { Account } from '../../models/Account'
 import { Connection, QueryError, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 
 class AccountDatabaseHandler {
@@ -56,14 +56,15 @@ class AccountDatabaseHandler {
       `SELECT * FROM accounts where user_id = ?`, [user_id]
     ) as RowDataPacket[]
 
-    if (data.length === 0) {
-      return undefined
-    }
+    if (data.length === 0) return undefined
 
-    const accountData = data[0] as IAccount
-    const account = new Account(accountData)
+    const accounts: Array<Account> = []
 
-    return account
+    data.forEach((account: Account) => {
+      accounts.push(new Account(account))
+    })
+
+    return accounts
   }
 }
 
