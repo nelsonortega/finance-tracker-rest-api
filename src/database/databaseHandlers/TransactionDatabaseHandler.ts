@@ -1,3 +1,4 @@
+import { Account } from '../../models/Account'
 import { ITransaction, Transaction } from '../../models/Transaction'
 import { Connection, QueryError, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 
@@ -30,14 +31,30 @@ class TransactionDatabaseHandler {
       `SELECT * FROM transactions where account_id = ?`, [account_id]
     ) as RowDataPacket[]
 
-    if (data.length === 0) {
-      return undefined
-    }
+    const transactionData = data as Array<ITransaction>
+    const transactions: Array<Transaction> = []
 
-    const transactionData = data[0] as ITransaction
-    const transaction = new Transaction(transactionData)
+    transactionData.forEach(transaction => {
+      transactions.push(new Transaction(transaction))
+    })
 
-    return transaction
+    return transactions
+  }
+
+  async getAccountsByUser(user_id: string) {
+    let [ data ]  = await this.dbConnection.query(
+      `SELECT * FROM accounts where user_id = ?`, [user_id]
+    ) as RowDataPacket[]
+
+    if (data.length === 0) return undefined
+
+    const accounts: Array<Account> = []
+
+    data.forEach((account: Account) => {
+      accounts.push(new Account(account))
+    })
+
+    return accounts
   }
 }
 
