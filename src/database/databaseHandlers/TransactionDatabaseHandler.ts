@@ -1,11 +1,12 @@
-import { Account } from '../../models/Account'
+import BaseDatabaseHandler from './BaseDatabaseHandler'
 import { ITransaction, Transaction } from '../../models/Transaction'
 import { Connection, QueryError, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 
-class TransactionDatabaseHandler {
+class TransactionDatabaseHandler extends BaseDatabaseHandler {
   private dbConnection: Connection
   
   constructor(dbConnection: Connection) {
+    super(dbConnection)
     this.dbConnection = dbConnection
   }
 
@@ -39,22 +40,6 @@ class TransactionDatabaseHandler {
     })
 
     return transactions
-  }
-
-  async getAccountsByUser(user_id: string) {
-    let [ data ]  = await this.dbConnection.query(
-      `SELECT * FROM accounts where user_id = ?`, [user_id]
-    ) as RowDataPacket[]
-
-    if (data.length === 0) return undefined
-
-    const accounts: Array<Account> = []
-
-    data.forEach((account: Account) => {
-      accounts.push(new Account(account))
-    })
-
-    return accounts
   }
 }
 

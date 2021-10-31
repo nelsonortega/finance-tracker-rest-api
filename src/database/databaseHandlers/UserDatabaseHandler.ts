@@ -1,10 +1,12 @@
-import { IUser, User } from '../../models/User'
-import { Connection, QueryError, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
+import { User } from '../../models/User'
+import BaseDatabaseHandler from './BaseDatabaseHandler'
+import { Connection, QueryError, ResultSetHeader } from 'mysql2/promise'
 
-class UserDatabaseHandler {
+class UserDatabaseHandler extends BaseDatabaseHandler {
   private dbConnection: Connection
   
   constructor(dbConnection: Connection) {
+    super(dbConnection)
     this.dbConnection = dbConnection
   }
 
@@ -49,33 +51,6 @@ class UserDatabaseHandler {
     }
 
     return { message: `User deleted` }
-  }
-
-  async getUserByEmail(email: string) {
-    let [ data ]  = await this.dbConnection.query(
-      `SELECT * FROM users where email = ?`, [email]
-    ) as RowDataPacket[]
-
-    return this.parseUser(data)
-  }
-
-  async getUserById(user_id: string) {
-    let [ data ]  = await this.dbConnection.query(
-      `SELECT * FROM users where user_id = ?`, [user_id]
-    ) as RowDataPacket[]
-
-    return this.parseUser(data)
-  }
-
-  parseUser(data: RowDataPacket) {
-    if (data.length === 0) {
-      return undefined
-    }
-
-    const userData = data[0] as IUser
-    const user = new User(userData)
-
-    return user
   }
 }
 
