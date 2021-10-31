@@ -5,11 +5,11 @@ import AccountDatabaseHandler from '../database/databaseHandlers/AccountDatabase
 
 class AccountController {
   private dbHandler: AccountDatabaseHandler
-  private validate: (account: Account) => Array<string>
+  private validateAccount: (account: Account) => Array<string>
 
-  constructor(dbHandler: AccountDatabaseHandler, validate: (account: Account) => Array<string>) {
+  constructor(dbHandler: AccountDatabaseHandler, validateAccount: (account: Account) => Array<string>) {
     this.dbHandler = dbHandler
-    this.validate = validate
+    this.validateAccount = validateAccount
   }
 
   async createAccount(req: Request, res: Response) {
@@ -18,8 +18,14 @@ class AccountController {
 
     account.user_id = parseInt(user_id)
 
-    const invalidAccount = this.validateAccount(account)
-    if (invalidAccount) return res.json(invalidAccount)
+    const validationErrors = this.validateAccount(account)
+
+    if (validationErrors.length > 0) {
+      return res.json({
+        success: false,
+        error: validationErrors
+      })   
+    }
 
     const dbResponse = await this.dbHandler.createAccount(account)
 
@@ -77,8 +83,14 @@ class AccountController {
     account.account_name = account_name
     account.currency = currency
 
-    const invalidAccount = this.validateAccount(account)
-    if (invalidAccount) return res.json(invalidAccount)
+    const validationErrors = this.validateAccount(account)
+
+    if (validationErrors.length > 0) {
+      return res.json({
+        success: false,
+        error: validationErrors
+      })   
+    }
 
     const dbResponse = await this.dbHandler.updateAccount(account)
 
@@ -151,13 +163,6 @@ class AccountController {
       success: true,
       message: `Account deleted`
     })
-  }
-
-  validateAccount(account: Account) {
-    const validationErrors = this.validate(account)
-
-    if (validationErrors.length > 0)
-      return { success: false, error: validationErrors }
   }
 }
 

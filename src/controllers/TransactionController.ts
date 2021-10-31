@@ -5,11 +5,11 @@ import TransactionDatabaseHandler from '../database/databaseHandlers/Transaction
 
 class TransactionController {
   private dbHandler: TransactionDatabaseHandler
-  private validate: (transaction: Transaction) => Array<string>
+  private validateTransaction: (transaction: Transaction) => Array<string>
 
-  constructor(dbHandler: TransactionDatabaseHandler, validate: (transaction: Transaction) => Array<string>) {
+  constructor(dbHandler: TransactionDatabaseHandler, validateTransaction: (transaction: Transaction) => Array<string>) {
     this.dbHandler = dbHandler
-    this.validate = validate
+    this.validateTransaction = validateTransaction
   }
 
   async createTransaction(req: Request, res: Response) {
@@ -17,8 +17,14 @@ class TransactionController {
     const transaction = new Transaction(req.body)
     let userAccountsIds: Array<number> = []
 
-    const invalidTransaction = this.validateTransaction(transaction)
-    if (invalidTransaction) return res.json(invalidTransaction)
+    const validationErrors = this.validateTransaction(transaction)
+
+    if (validationErrors.length > 0) {
+      return res.json({
+        success: false,
+        error: validationErrors
+      })   
+    }
 
     const userAccounts = await this.dbHandler.getAccountsByUser(user_id)
 
@@ -71,13 +77,6 @@ class TransactionController {
       success: true,
       transactions: dbResponse
     })
-  }
-
-  validateTransaction(transaction: Transaction) {
-    const validationErrors = this.validate(transaction)
-
-    if (validationErrors.length > 0)
-      return { success: false, error: validationErrors }
   }
 }
 

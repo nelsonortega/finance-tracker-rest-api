@@ -32,7 +32,6 @@ export function validateAccount(account: Account) {
   let errors: Array<string> = []
   const { account_name, currency, user_id } = account
 
-
   if (account_name === null || account_name === undefined || account_name.trim().length <= 0) {
     errors.push(`Field account_name can't be empty`)
   }
@@ -48,8 +47,25 @@ export function validateAccount(account: Account) {
   return errors
 }
 
-export function validateTransaction(_transaction: Transaction) { 
+export function validateTransaction(transaction: Transaction) { 
   let errors: Array<string> = []
+  const { transaction_description, amount, is_income, account_id } = transaction
+
+  if (transaction_description === null || transaction_description === undefined || transaction_description.trim().length <= 0) {
+    errors.push(`Field transaction_description can't be empty`)
+  }
+
+  if (amount === null || amount === undefined) {
+    errors.push(`Field amount can't be empty`)
+  }
+
+  if (is_income === null || is_income === undefined) {
+    errors.push(`Field is_income can't be empty`)
+  }
+
+  if (account_id === null || account_id === undefined) {
+    errors.push(`Field account_id can't be empty`)
+  }
 
   return errors
 }

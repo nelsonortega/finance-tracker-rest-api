@@ -5,18 +5,24 @@ import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandle
 
 class UserController {
   private dbHandler: UserDatabaseHandler
-  private validate: (user: User) => Array<string>
+  private validateUser: (user: User) => Array<string>
 
-  constructor(dbHandler: UserDatabaseHandler, validate: (user: User) => Array<string>) {
+  constructor(dbHandler: UserDatabaseHandler, validateUser: (user: User) => Array<string>) {
     this.dbHandler = dbHandler
-    this.validate = validate
+    this.validateUser = validateUser
   }
 
   async createUser(req: Request, res: Response) {
     const user = new User(req.body)
 
-    const invalidUser = this.validateUser(user)
-    if (invalidUser) return res.json(invalidUser)
+    const validationErrors = this.validateUser(user)
+
+    if (validationErrors.length > 0) {
+      return res.json({
+        success: false,
+        error: validationErrors
+      })   
+    }
 
     user.hashPassword()
 
@@ -51,8 +57,14 @@ class UserController {
     user.first_name = first_name
     user.last_name = last_name
 
-    const invalidUser = this.validateUser(user)
-    if (invalidUser) return res.json(invalidUser)
+    const validationErrors = this.validateUser(user)
+
+    if (validationErrors.length > 0) {
+      return res.json({
+        success: false,
+        error: validationErrors
+      })   
+    }
 
     const dbResponse = await this.dbHandler.updateUser(user)
 
@@ -147,8 +159,14 @@ class UserController {
 
     user.email = new_email
 
-    const invalidUser = this.validateUser(user)
-    if (invalidUser) return res.json(invalidUser)
+    const validationErrors = this.validateUser(user)
+
+    if (validationErrors.length > 0) {
+      return res.json({
+        success: false,
+        error: validationErrors
+      })   
+    }
 
     const dbResponse = await this.dbHandler.updateUser(user)
 
@@ -163,13 +181,6 @@ class UserController {
       success: true,
       message: `Email changed`
     })
-  }
-
-  validateUser(user: User) {
-    const validationErrors = this.validate(user)
-
-    if (validationErrors.length > 0)
-      return { success: false, error: validationErrors }
   }
 }
 
