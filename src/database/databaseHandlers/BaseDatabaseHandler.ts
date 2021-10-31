@@ -1,5 +1,5 @@
 import { Account } from '../../models/Account'
-import { IUser, User } from '../../models/User'
+import { parseUser } from '../../utils/dbParseUser'
 import { Connection, RowDataPacket } from 'mysql2/promise'
 
 class BaseDatabaseHandler {
@@ -14,7 +14,7 @@ class BaseDatabaseHandler {
       `SELECT * FROM users where user_id = ?`, [user_id]
     ) as RowDataPacket[]
 
-    return this.parseUser(data)
+    return parseUser(data)
   }
 
   async getUserByEmail(email: string) {
@@ -22,7 +22,7 @@ class BaseDatabaseHandler {
       `SELECT * FROM users where email = ?`, [email]
     ) as RowDataPacket[]
 
-    return this.parseUser(data)
+    return parseUser(data)
   }
 
   async getAccountsByUser(user_id: string) {
@@ -39,17 +39,6 @@ class BaseDatabaseHandler {
     })
 
     return accounts
-  }
-
-  parseUser(data: RowDataPacket) {
-    if (data.length === 0) {
-      return undefined
-    }
-
-    const userData = data[0] as IUser
-    const user = new User(userData)
-
-    return user
   }
 }
 
