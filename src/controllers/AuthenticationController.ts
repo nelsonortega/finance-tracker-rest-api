@@ -5,22 +5,13 @@ import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandle
 
 class AuthenticationController {
   private dbHandler: UserDatabaseHandler
-  private validatePassword: (password: string, oldPassword: string) => Array<string>
 
-  constructor(dbHandler: UserDatabaseHandler, validatePassword: (password: string, oldPassword: string) => Array<string>) {
+  constructor(dbHandler: UserDatabaseHandler) {
     this.dbHandler = dbHandler
-    this.validatePassword = validatePassword
   }
 
   async login(req: Request, res: Response) {
     const { email, user_password } = req.body
-
-    if(!(email && user_password)) {
-      return res.json({
-        success: false,
-        message: `Fields email and user_password can't be empty`
-      })
-    }
 
     const user = await this.dbHandler.getUserByEmail(email)
 
@@ -52,15 +43,6 @@ class AuthenticationController {
   async changePassword(req: Request, res: Response) {
     const { user_id } = req.params
     const { old_password, user_password } = req.body
-
-    const validationErrors = this.validatePassword(user_password, old_password)
-
-    if (validationErrors.length > 0) {
-      return res.json({
-        success: false,
-        error: validationErrors
-      })      
-    }
 
     const user = await this.dbHandler.getUserById(user_id)
 

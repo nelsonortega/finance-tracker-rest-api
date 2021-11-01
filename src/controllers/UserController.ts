@@ -5,24 +5,13 @@ import UserDatabaseHandler from '../database/databaseHandlers/UserDatabaseHandle
 
 class UserController {
   private dbHandler: UserDatabaseHandler
-  private validateUser: (user: User) => Array<string>
 
-  constructor(dbHandler: UserDatabaseHandler, validateUser: (user: User) => Array<string>) {
+  constructor(dbHandler: UserDatabaseHandler) {
     this.dbHandler = dbHandler
-    this.validateUser = validateUser
   }
 
   async createUser(req: Request, res: Response) {
     const user = new User(req.body)
-
-    const validationErrors = this.validateUser(user)
-
-    if (validationErrors.length > 0) {
-      return res.json({
-        success: false,
-        error: validationErrors
-      })   
-    }
 
     user.hashPassword()
 
@@ -57,15 +46,6 @@ class UserController {
     user.first_name = first_name
     user.last_name = last_name
 
-    const validationErrors = this.validateUser(user)
-
-    if (validationErrors.length > 0) {
-      return res.json({
-        success: false,
-        error: validationErrors
-      })   
-    }
-
     const dbResponse = await this.dbHandler.updateUser(user)
 
     if (dbResponse.error) {
@@ -84,13 +64,6 @@ class UserController {
   async deleteUser(req: Request, res: Response) {
     const { user_id } = req.params
     const { user_password } = req.body
-
-    if(!user_password) {
-      return res.json({
-        success: false,
-        message: `Field user_password can't be empty`
-      })
-    }
 
     const user = await this.dbHandler.getUserById(user_id)
 
@@ -127,13 +100,6 @@ class UserController {
     const { user_id } = req.params
     const { new_email, user_password } = req.body
 
-    if (!user_password) {
-      return res.json({
-        success: false,
-        message: `Field user_password is required`
-      })      
-    }
-
     const user = await this.dbHandler.getUserById(user_id)
 
     if (!user) {
@@ -158,15 +124,6 @@ class UserController {
     }
 
     user.email = new_email
-
-    const validationErrors = this.validateUser(user)
-
-    if (validationErrors.length > 0) {
-      return res.json({
-        success: false,
-        error: validationErrors
-      })   
-    }
 
     const dbResponse = await this.dbHandler.updateUser(user)
 

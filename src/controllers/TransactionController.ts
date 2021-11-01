@@ -5,11 +5,9 @@ import TransactionDatabaseHandler from '../database/databaseHandlers/Transaction
 
 class TransactionController {
   private dbHandler: TransactionDatabaseHandler
-  private validateTransaction: (transaction: Transaction) => Array<string>
 
-  constructor(dbHandler: TransactionDatabaseHandler, validateTransaction: (transaction: Transaction) => Array<string>) {
+  constructor(dbHandler: TransactionDatabaseHandler) {
     this.dbHandler = dbHandler
-    this.validateTransaction = validateTransaction
   }
 
   async createTransaction(req: Request, res: Response) {
@@ -17,14 +15,8 @@ class TransactionController {
     const transaction = new Transaction(req.body)
     let userAccountsIds: Array<number> = []
 
-    const validationErrors = this.validateTransaction(transaction)
-
-    if (validationErrors.length > 0) {
-      return res.json({
-        success: false,
-        error: validationErrors
-      })   
-    }
+    transaction.account_id = parseInt(req.body.account_id)
+    transaction.amount = parseFloat(req.body.amount)
 
     const userAccounts = await this.dbHandler.getAccountsByUser(user_id)
 
@@ -34,7 +26,7 @@ class TransactionController {
       if (!userAccountsIds.includes(transaction.account_id)) {
         return res.json({
           success: false,
-          error: `Account doesn't belong to the user`
+          error: `Account not found`
         })
       }
     }
