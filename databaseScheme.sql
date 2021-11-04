@@ -24,7 +24,7 @@ CREATE TABLE accounts(
 CREATE TABLE transactions(
 	transaction_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     transaction_description VARCHAR(50) NOT NULL,
-    amount INT UNSIGNED NOT NULL,
+    amount DECIMAL(10,2) UNSIGNED NOT NULL,
     is_income BOOLEAN NOT NULL,
     account_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
